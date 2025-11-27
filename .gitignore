@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+.env.*
+backend/dist
+backend/node_modules
+frontend/node_modules
+.DS_Store
+Thumbs.db
+.vscode
+
