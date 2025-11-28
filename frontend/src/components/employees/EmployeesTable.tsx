@@ -26,6 +26,7 @@ import type { Employee } from '../../types';
 import { deleteEmployee } from '../../services/employees';
 import { useToast } from '../../context/ToastContext';
 import { EditEmployeeDialog } from './EditEmployeeDialog';
+import EmptyState from '../common/EmptyState';
 
 interface Props {
   employees: Employee[];
@@ -74,7 +75,10 @@ export const EmployeesTable = ({ employees }: Props) => {
   return (
     <>
       <Paper sx={{ borderRadius: 4, p: 2, overflowX: 'auto' }}>
-        <Table>
+        {employees.length === 0 ? (
+          <EmptyState title="No employees" subtitle="Add team members to start assigning tasks" action={{ label: 'Add employee', onClick: () => {} }} />
+        ) : (
+          <Table>
           <TableHead>
             <TableRow>
               <TableCell>Employee</TableCell>
@@ -155,7 +159,8 @@ export const EmployeesTable = ({ employees }: Props) => {
               );
             })}
           </TableBody>
-        </Table>
+          </Table>
+        )}
       </Paper>
 
       {selectedEmployee && (

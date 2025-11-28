@@ -79,11 +79,11 @@ export const NewEmployeeDialog = ({ open, onClose, onCreate, isSubmitting }: Pro
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Add Employee</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="new-employee-dialog-title">
+      <DialogTitle id="new-employee-dialog-title">Add Employee</DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} mt={1}>
-          <TextField label="Full name" value={form.name} onChange={handleChange('name')} required />
+          <TextField label="Full name" value={form.name} onChange={handleChange('name')} required autoFocus />
           <TextField label="Email" type="email" value={form.email} onChange={handleChange('email')} required />
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField label="Title" value={form.title} onChange={handleChange('title')} fullWidth />

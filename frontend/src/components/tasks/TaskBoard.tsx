@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Task, TaskStatus, Employee } from '../../types';
 import { TaskCard } from './TaskCard';
+import EmptyState from '../common/EmptyState';
 import { EditTaskDialog } from './EditTaskDialog';
 import { deleteTask } from '../../services/tasks';
 import { useToast } from '../../context/ToastContext';
@@ -107,7 +108,10 @@ export const TaskBoard = ({ tasks, employees, onStatusChange, onPriorityChange, 
                       </Typography>
                     </Stack>
                     <div>
-                      {column.items.map((task, index) => {
+                      {column.items.length === 0 ? (
+                        <EmptyState title="No tasks" subtitle="Drag tasks here or create a new one" showIcon={false} />
+                      ) : (
+                        column.items.map((task, index) => {
                         const card = (
                           <TaskCard
                             key={task.id}
@@ -132,7 +136,8 @@ export const TaskBoard = ({ tasks, employees, onStatusChange, onPriorityChange, 
                             )}
                           </Draggable>
                         );
-                      })}
+                        })
+                      )}
                       {provided.placeholder}
                     </div>
                   </Stack>

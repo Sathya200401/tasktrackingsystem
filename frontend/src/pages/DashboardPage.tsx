@@ -9,12 +9,14 @@ import { KpiGrid } from '../components/dashboard/KpiGrid';
 import { StatusDistribution } from '../components/dashboard/StatusDistribution';
 import { RecentActivity } from '../components/dashboard/RecentActivity';
 import { TeamLoad } from '../components/dashboard/TeamLoad';
+import { TimelineChart } from '../components/dashboard/TimelineChart';
 import { NewTaskDialog } from '../components/tasks/NewTaskDialog';
 import { useAuth } from '../context/AuthContext';
 
 export const DashboardPage = () => {
   const queryClient = useQueryClient();
   const [isTaskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const { data: summary, isLoading } = useQuery({ queryKey: ['dashboard'], queryFn: getDashboard });
   const { data: employees = [] } = useQuery({ queryKey: ['employees'], queryFn: getEmployees });
   const { isAdmin } = useAuth();
@@ -61,7 +63,7 @@ export const DashboardPage = () => {
         gap={3}
         gridTemplateColumns={{ xs: 'repeat(1, minmax(0, 1fr))', md: '2fr 1fr' }}
       >
-        <StatusDistribution distribution={summary.distribution} />
+        <StatusDistribution distribution={summary.distribution} onSelectStatus={(status) => setSelectedStatus(status ?? null)} />
         <TeamLoad employees={employees} />
       </Box>
 
@@ -70,7 +72,8 @@ export const DashboardPage = () => {
         gap={3}
         gridTemplateColumns={{ xs: 'repeat(1, minmax(0, 1fr))', md: 'repeat(2, minmax(0, 1fr))' }}
       >
-        <RecentActivity tasks={summary.recentActivities} />
+        <RecentActivity tasks={summary.recentActivities} filterStatus={selectedStatus} />
+        <TimelineChart tasks={summary.recentActivities} days={30} />
         <Paper sx={{ p: 3, borderRadius: 4 }}>
           <Stack spacing={2}>
             <Typography variant="h6">Delivery Insights</Typography>

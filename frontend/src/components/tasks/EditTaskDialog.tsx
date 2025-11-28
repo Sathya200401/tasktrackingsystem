@@ -121,8 +121,8 @@ export const EditTaskDialog = ({ open, onClose, task, employees, onSuccess }: Pr
   const assignedEmployee = typeof form.assignedTo === 'object' ? form.assignedTo : null;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Edit Task</DialogTitle>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth aria-labelledby="edit-task-dialog-title">
+      <DialogTitle id="edit-task-dialog-title">Edit Task</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={2}>
           <TextField
@@ -131,6 +131,7 @@ export const EditTaskDialog = ({ open, onClose, task, employees, onSuccess }: Pr
             value={form.title || ''}
             onChange={handleChange('title')}
             disabled={mutation.isPending}
+            autoFocus
           />
           <TextField
             label="Description"

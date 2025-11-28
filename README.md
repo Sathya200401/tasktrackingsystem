@@ -6,7 +6,7 @@ Modern full-stack tool for managing employees and their work streams with a Jira
 
 | Layer     | Tech                                                                 |
 |-----------|----------------------------------------------------------------------|
-| Frontend  | Vite + React 19, TypeScript, React Router, MUI 7, React Query, Axios |
+| Frontend  | Vite + React 19, TypeScript, React Router, MUI 7, React Query, Axios, Recharts |
 | Backend   | Node.js 20, Express 5, TypeScript, Mongoose, express-validator       |
 | Database  | MongoDB 7 (local instance or Atlas)                                  |
 
@@ -145,7 +145,9 @@ Relationships are enforced via Mongoose refs and validated in route handlers. `b
 
 - **Mission Control Dashboard** – KPI cards, workload distribution, and real-time activity feed.
 - **Kanban Task Board** – four swimlanes (Backlog → Done) with inline status/priority editing, milestone & estimate capture, drag-and-drop for admins, and a modern modal for new tasks.
+ - **Kanban Task Board** – four swimlanes (Backlog → Done) with inline status/priority editing, milestone & estimate capture, drag-and-drop for admins, and a modern modal for new tasks. Empty columns now display a light placeholder without in-column Add buttons to reduce clutter; a central ‘Add Task’ control is recommended.
 - **Employee Ops Center** – table showing ownership, skills, allocations, and completion rates, plus a first-class “Add employee” workflow.
+ - **Employee Ops Center** – table showing ownership, skills, allocations, and completion rates, plus a first-class “Add employee” workflow. The table shows a friendly empty state when no employees are present.
 - **Authentication & RBAC** – admin-only create/update/delete endpoints guarded by JWT; everyone else automatically receives view-only access. Use `admin@nexus.io` / `aimadmin@123` for full control.
 - Responsive, themeable interface powered by Material UI 7 with Inter typography.
 
@@ -165,4 +167,42 @@ Frontend currently has no unit tests; add tests as a recommended next step.
 2. Introduce drag-and-drop swimlane reordering persistence (ordering within a column).
 3. Add automated tests (Jest + React Testing Library, supertest for API).
 4. Containerize with Docker Compose for one-command spin-up.
+
+## What's New (UI & UX Enhancements)
+
+This project includes multiple notable UI/UX improvements implemented on the frontend. They are safe, incremental changes meant to improve clarity and visibility for both users and reviewers.
+
+- Interactive Status Distribution (pie chart)
+  - The status distribution in the Dashboard is now a clickable pie chart built with `recharts`. Clicking a slice filters the "Recent Activity" list by that status.
+  - Files: `frontend/src/components/dashboard/StatusDistribution.tsx`, wired in: `frontend/src/pages/DashboardPage.tsx`.
+
+- Team Load visualization (bar chart)
+  - Team load is now displayed with a vertical stacked bar chart using `recharts` showing total tasks vs completed tasks for top employees, while preserving a compact progress list beneath it.
+  - Files: `frontend/src/components/dashboard/TeamLoad.tsx`.
+
+- Timeline & Burndown chart
+  - The dashboard includes a brushable area chart showing cumulative created/completed tasks and a burndown-like 'remaining' series.
+  - Files: `frontend/src/components/dashboard/TimelineChart.tsx`.
+
+- Empty States & Reduced CTA clutter
+  - A reusable `EmptyState` component was added and used on empty task swimlanes and empty employee table views; in-column Add buttons in empty task cards have been removed to reduce visual noise.
+  - Files: `frontend/src/components/common/EmptyState.tsx`, `frontend/src/components/tasks/TaskBoard.tsx`, `frontend/src/components/employees/EmployeesTable.tsx`.
+
+- Dialog accessibility improvements
+  - All major dialogs were updated with `aria-labelledby` and first-input `autoFocus` to give sensible focus and screen reader labels.
+  - Files: `frontend/src/components/tasks/NewTaskDialog.tsx`, `frontend/src/components/tasks/EditTaskDialog.tsx`, `frontend/src/components/employees/NewEmployeeDialog.tsx`, `frontend/src/components/employees/EditEmployeeDialog.tsx`.
+
+- Toast improvements
+  - Toasts now dedupe identical message+type entries and support persistent messages (duration=0) that require manual dismissal.
+  - File: `frontend/src/context/ToastContext.tsx`.
+
+- Task Card polishing
+  - `TaskCard` has improved drag affordance and hover elevation to better communicate interactivity on draggable cards.
+  - File: `frontend/src/components/tasks/TaskCard.tsx`.
+
+Developer notes
+- Recharts has been added as a runtime dependency for frontend charts (`recharts` in `frontend/package.json`).
+- The Timeline chart uses client-side aggregation from the `recentActivities` list. For long date ranges or large datasets, consider adding a dedicated server endpoint that returns aggregated time-series data.
+
+
 

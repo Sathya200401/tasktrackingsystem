@@ -45,7 +45,17 @@ const priorityColors: Record<TaskPriority, string> = {
 const priorityOptions = Object.keys(priorityColors) as TaskPriority[];
 
 export const TaskCard = ({ task, statusAccent, onStatusChange, onPriorityChange, onEdit, onDelete, isReadOnly }: Props) => (
-  <Card variant="outlined" sx={{ borderRadius: 2, mb: 2, borderLeft: `4px solid ${statusAccent}` }}>
+  <Card
+    variant="outlined"
+    sx={{
+      borderRadius: 2,
+      mb: 2,
+      borderLeft: `4px solid ${statusAccent}`,
+      cursor: isReadOnly ? 'default' : 'grab',
+      transition: 'box-shadow .12s ease, transform .08s ease',
+      '&:hover': { boxShadow: 3, transform: isReadOnly ? 'none' : 'translateY(-2px)' },
+    }}
+  >
     <CardContent>
       <Stack spacing={1.5}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">

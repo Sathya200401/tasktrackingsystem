@@ -195,6 +195,9 @@ export const AppLayout = () => {
               {isDarkMode ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
             </IconButton>
             <Chip label={isAdmin ? 'Admin' : 'Viewer'} color={isAdmin ? 'primary' : 'default'} variant={isAdmin ? 'filled' : 'outlined'} />
+            <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+              Role: <strong>{isAdmin ? 'Admin' : 'Viewer'}</strong>
+            </Typography>
             <Divider orientation="vertical" flexItem />
             <IconButton>
               <NotificationsNoneOutlinedIcon />

@@ -93,8 +93,8 @@ export const NewTaskDialog = ({ open, onClose, employees, onCreate, isSubmitting
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Create Task</DialogTitle>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth aria-labelledby="new-task-dialog-title">
+      <DialogTitle id="new-task-dialog-title">Create Task</DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} mt={1}>
           <TextField 
@@ -105,6 +105,7 @@ export const NewTaskDialog = ({ open, onClose, employees, onCreate, isSubmitting
             helperText={errors.title}
             required 
             fullWidth 
+            autoFocus
           />
           <TextField
             label="Description"

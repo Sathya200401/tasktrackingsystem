@@ -92,8 +92,8 @@ export const EditEmployeeDialog = ({ open, onClose, employee, onSuccess }: Props
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Edit Employee</DialogTitle>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth aria-labelledby="edit-employee-dialog-title">
+      <DialogTitle id="edit-employee-dialog-title">Edit Employee</DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={2}>
           <TextField
@@ -102,6 +102,7 @@ export const EditEmployeeDialog = ({ open, onClose, employee, onSuccess }: Props
             value={form.name || ''}
             onChange={handleChange('name')}
             disabled={mutation.isPending}
+            autoFocus
           />
           <TextField
             label="Email"
