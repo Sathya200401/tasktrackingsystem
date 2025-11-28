@@ -67,17 +67,45 @@ export const EditTaskDialog = ({ open, onClose, task, employees, onSuccess }: Pr
   const mutation = useMutation({
     mutationFn: async () => {
       if (!task?.id) return;
-      return updateTask(task.id, {
-        title: form.title as string,
-        description: form.description,
-        status: form.status as TaskStatus,
-        priority: form.priority as TaskPriority,
-        dueDate: form.dueDate,
-        tags: form.tags,
-        milestone: form.milestone,
-        estimatedHours: form.estimatedHours,
-        assignedTo: typeof form.assignedTo === 'object' && form.assignedTo?.id ? form.assignedTo.id : '',
-      });
+      const payload: any = {};
+
+      // only include fields that actually changed / are non-empty to avoid
+      // overwriting optional fields with empty strings
+      const title = String(form.title ?? '').trim();
+      if (title && title !== (task.title ?? '')) payload.title = title;
+
+      const desc = String(form.description ?? '').trim();
+      if (desc !== (task.description ?? '')) payload.description = desc || undefined;
+
+      if (form.status && form.status !== task.status) payload.status = form.status;
+      if (form.priority && form.priority !== task.priority) payload.priority = form.priority;
+
+      const due = String(form.dueDate ?? '').trim();
+      if (due) {
+        // compare normalized date string (YYYY-MM-DD)
+        const taskDue = task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '';
+        if (due !== taskDue) payload.dueDate = due;
+      }
+
+      if (Array.isArray(form.tags)) payload.tags = form.tags;
+
+      const milestone = String(form.milestone ?? '').trim();
+      if (milestone !== (task.milestone ?? '')) payload.milestone = milestone || undefined;
+
+      if (form.estimatedHours !== undefined && form.estimatedHours !== null && form.estimatedHours !== '') {
+        const hours = Number(form.estimatedHours);
+        if (!Number.isNaN(hours) && hours !== (task.estimatedHours ?? 0)) payload.estimatedHours = hours;
+      }
+
+      const assignedId = typeof form.assignedTo === 'object' && form.assignedTo?.id ? form.assignedTo.id : String(form.assignedTo ?? '').trim();
+      if (assignedId) {
+        if (assignedId !== String(task.assignedTo ?? '')) payload.assignedTo = assignedId;
+      } else if (form.assignedTo === null) {
+        // allow clearing assignment
+        payload.assignedTo = null;
+      }
+
+      return updateTask(task.id, payload);
     },
     onSuccess: () => {
       showToast('Task updated successfully', 'success');
