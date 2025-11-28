@@ -17,6 +17,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,6 +26,7 @@ import { useState } from 'react';
 import type { Employee } from '../../types';
 import { deleteEmployee } from '../../services/employees';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import { EditEmployeeDialog } from './EditEmployeeDialog';
 import EmptyState from '../common/EmptyState';
 
@@ -39,6 +41,7 @@ export const EmployeesTable = ({ employees }: Props) => {
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const { isAdmin } = useAuth();
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteEmployee(id),
@@ -76,7 +79,11 @@ export const EmployeesTable = ({ employees }: Props) => {
     <>
       <Paper sx={{ borderRadius: 4, p: 2, overflowX: 'auto' }}>
         {employees.length === 0 ? (
-          <EmptyState title="No employees" subtitle="Add team members to start assigning tasks" action={{ label: 'Add employee', onClick: () => {} }} />
+          <EmptyState
+            title="No employees"
+            subtitle="Add team members to start assigning tasks"
+            action={isAdmin ? { label: 'Add employee', onClick: () => {} } : undefined}
+          />
         ) : (
           <Table>
           <TableHead>
@@ -136,24 +143,37 @@ export const EmployeesTable = ({ employees }: Props) => {
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
-                    <Stack direction="row" spacing={1} justifyContent="center">
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        onClick={() => handleEditClick(employee)}
-                        title="Edit employee"
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteClick(employee)}
-                        title="Delete employee"
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Stack>
+                    {isAdmin ? (
+                      <Stack direction="row" spacing={1} justifyContent="center">
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => handleEditClick(employee)}
+                          title="Edit employee"
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => handleDeleteClick(employee)}
+                          title="Delete employee"
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Stack>
+                    ) : (
+                      <Tooltip title="Admins only">
+                        <span>
+                          <IconButton size="small" color="primary" disabled title="Edit employee">
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton size="small" color="error" disabled title="Delete employee" sx={{ ml: 1 }}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                    )}
                   </TableCell>
                 </TableRow>
               );
